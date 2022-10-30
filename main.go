@@ -66,6 +66,7 @@ func main() {
 	err := app.GenerateStaticWebsite(".", &app.Handler{
 		Name:        "Hello",
 		Description: "An Hello World! example",
+		Resources:   app.GitHubPages("launcher-app"),
 	})
 	if err != nil {
 		log.Fatal(err)
