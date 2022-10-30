@@ -63,7 +63,7 @@ func main() {
 		Description: "An Hello World! example",
 	})
 
-	err := app.GenerateStaticWebsite("./gh-pagesRelease", &app.Handler{
+	err := app.GenerateStaticWebsite("./docs", &app.Handler{
 		Name:        "Hello",
 		Description: "An Hello World! example",
 		Resources:   app.GitHubPages("launcher-app"),
