@@ -4,6 +4,8 @@ import (
 	"log"
 	"net/http"
 
+	B "github.com/PatrickLaabs/launcher-app/bar"
+
 	"github.com/maxence-charriere/go-app/v9/pkg/app"
 )
 
@@ -18,6 +20,10 @@ type foo struct {
 	app.Compo
 }
 
+type myCompo struct {
+	app.Compo
+}
+
 // The Render method is where the component appearance is defined. Here, a
 // "Hello World!" is displayed as a heading.
 func (h *hello) Render() app.UI {
@@ -25,7 +31,33 @@ func (h *hello) Render() app.UI {
 }
 
 func (f *foo) Render() app.UI {
-	return app.H2().Text("Foo Page!")
+	return app.Div().Body(
+		app.H1().
+			Class("title").
+			Text("Build a GUI with Go"),
+		app.P().
+			Class("text").
+			Text("Bla bla bla"),
+		&B.Bar{},
+		//&myCompo{},
+		&svg{},
+	)
+}
+
+func (c *myCompo) Render() app.UI {
+	return app.Img().Src("https://gophersource.com/img/inclusion.png")
+}
+
+type svg struct {
+	app.Compo
+}
+
+func (s *svg) Render() app.UI {
+	return app.Raw(`
+		<svg width="100" height="100">
+		<circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" />
+	</svg>
+	`)
 }
 
 // The main function is the entry point where the app is configured and started.
@@ -38,6 +70,7 @@ func main() {
 	// component to display for a given path, on both client and server-side.
 	app.Route("/", &hello{})
 	app.Route("/foo", &foo{})
+	app.Route("/gopher", &myCompo{})
 
 	// Once the routes set up, the next thing to do is to either launch the app
 	// or the server that serves the app.
