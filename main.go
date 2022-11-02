@@ -1,10 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
 	B "github.com/PatrickLaabs/launcher-app/bar"
+	F "github.com/PatrickLaabs/launcher-app/footer"
+	L "github.com/PatrickLaabs/launcher-app/leftside"
 
 	"github.com/maxence-charriere/go-app/v9/pkg/app"
 )
@@ -20,10 +23,6 @@ type foo struct {
 	app.Compo
 }
 
-type myCompo struct {
-	app.Compo
-}
-
 // The Render method is where the component appearance is defined. Here, a
 // "Hello World!" is displayed as a heading.
 func (h *hello) Render() app.UI {
@@ -31,21 +30,55 @@ func (h *hello) Render() app.UI {
 }
 
 func (f *foo) Render() app.UI {
-	return app.Div().Body(
-		app.H1().
-			Class("title").
-			Text("Build a GUI with Go"),
-		app.P().
-			Class("text").
-			Text("Bla bla bla"),
-		&B.Bar{},
-		//&myCompo{},
-		&svg{},
-	)
+	return app.Div().
+		Style("background-color", "deepskyblue").
+		Body(
+			app.H1().
+				Class("title").
+				Text("Build a GUI with Go"),
+			app.P().
+				Class("text").
+				Text("Bla bla bla"),
+			&B.Bar{},
+			&myCompo{},
+			&svg{},
+			&homeButton{},
+			&F.Footer{},
+		)
+}
+
+type testPage struct {
+	app.Compo
+}
+
+func (t *testPage) Render() app.UI {
+	return app.Main().
+		Body(
+			app.H1().
+				Class("title").
+				Text("Test Page"),
+			app.Section().
+				Text("bla").
+				Style("background-color", "yellow").
+				Style("position", "absolute").
+				Style("height", "70px").
+				Style("width", "25px").
+				Style("left", "0"),
+			&L.Leftside{},
+			&F.Footer{},
+		)
+}
+
+type myCompo struct {
+	app.Compo
 }
 
 func (c *myCompo) Render() app.UI {
-	return app.Img().Src("https://gophersource.com/img/inclusion.png")
+	return app.Img().
+		Alt("Gopher Image").
+		Src("/web/_assets/gopher.png").
+		Height(256).
+		Width(256)
 }
 
 type svg struct {
@@ -60,6 +93,23 @@ func (s *svg) Render() app.UI {
 	`)
 }
 
+type homeButton struct {
+	app.Compo
+}
+
+func (b *homeButton) Render() app.UI {
+	return app.Button().
+		Text("Test-Button").
+		Style("width", "50px").
+		Style("height", "50px").
+		OnClick(b.OnClick)
+}
+
+func (b *homeButton) OnClick(ctx app.Context, e app.Event) {
+	fmt.Println("Button pressed")
+
+}
+
 // The main function is the entry point where the app is configured and started.
 // It is executed in 2 different environments: A client (the web browser) and a
 // server.
@@ -71,6 +121,7 @@ func main() {
 	app.Route("/", &hello{})
 	app.Route("/foo", &foo{})
 	app.Route("/gopher", &myCompo{})
+	app.Route("/test", &testPage{})
 
 	// Once the routes set up, the next thing to do is to either launch the app
 	// or the server that serves the app.
